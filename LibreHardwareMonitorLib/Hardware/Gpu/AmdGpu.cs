@@ -89,8 +89,14 @@ namespace LibreHardwareMonitor.Hardware.Gpu
 
             if (_currentOverdriveApiLevel >= 6)
             {
-                if (AtiAdlxx.ADL2_Main_Control_Create(AtiAdlxx.Main_Memory_Alloc, adapterIndex, ref _context) == AtiAdlxx.ADLStatus.ADL_OK)
+                // try and get the context
+                AtiAdlxx.ADLStatus status = AtiAdlxx.ADL2_Main_Control_Create(AtiAdlxx.Main_Memory_Alloc, adapterIndex, ref _context);
+
+                // ADL2 is not supported
+                if (status != AtiAdlxx.ADLStatus.ADL_OK)
+                {
                     _context = IntPtr.Zero;
+                }
             }
 
             AtiAdlxx.ADLFanSpeedInfo fanSpeedInfo = new AtiAdlxx.ADLFanSpeedInfo();
@@ -511,6 +517,27 @@ namespace LibreHardwareMonitor.Hardware.Gpu
                 r.Append(" Status Percent: ");
                 r.AppendLine(status.ToString());
                 r.AppendFormat(" Value Percent: {0}{1}", adlf.FanSpeed, Environment.NewLine);
+            }
+            catch (Exception e)
+            {
+                r.AppendLine(" Status: " + e.Message);
+            }
+
+            r.AppendLine("Overdrive6 FanSpeed");
+            r.AppendLine();
+            try
+            {
+                var fanSpeedValue = new AtiAdlxx.ADLOD6FanSpeedValue { SpeedType = AtiAdlxx.ADL_DL_FANCTRL_SPEED_TYPE_RPM };
+                var status = AtiAdlxx.ADL_Overdrive6_FanSpeed_Get(_adapterIndex, ref fanSpeedValue);
+                r.Append(" Status RPM: ");
+                r.AppendLine(status.ToString());
+                r.AppendFormat(" Value RPM: {0}{1}", fanSpeedValue.FanSpeed, Environment.NewLine);
+
+                fanSpeedValue.SpeedType = AtiAdlxx.ADL_DL_FANCTRL_SPEED_TYPE_PERCENT;
+                status = AtiAdlxx.ADL_Overdrive6_FanSpeed_Get(_adapterIndex, ref fanSpeedValue);
+                r.Append(" Status Percent: ");
+                r.AppendLine(status.ToString());
+                r.AppendFormat(" Value Percent: {0}{1}", fanSpeedValue.FanSpeed, Environment.NewLine);
             }
             catch (Exception e)
             {

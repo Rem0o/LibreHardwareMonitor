@@ -85,6 +85,12 @@ namespace LibreHardwareMonitor.Interop
         public static extern ADLStatus ADL2_OverdriveN_Temperature_Get(IntPtr context, int adapterIndex, ADLODNTemperatureType iTemperatureType, ref int temp);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern ADLStatus ADL2_OverdriveN_FanControl_Get(IntPtr context, int adapterIndex, ref ADLODNFanControl parameters );
+
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+        public static extern ADLStatus ADL2_OverdriveN_FanControl_Set(IntPtr context, int adapterIndex, ref ADLODNFanControl parameters);
+
+        [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
         public static extern ADLStatus ADL_Overdrive5_FanSpeed_Get(int adapterIndex, int thermalControllerIndex, ref ADLFanSpeedValue fanSpeedValue);
 
         [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
@@ -433,7 +439,28 @@ namespace LibreHardwareMonitor.Interop
             public int VDDCI;
         }
 
-        internal enum ADLODNTemperatureType
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct ADLODNFanControl
+        {
+            int CurrentFanSpeed;
+            int CurrentFanSpeedMode;
+            ADLODNControlType FanControlMode;
+            int MinFanLimit;
+            int MinPerformanceClock;
+            ADLODNControlType Mode;
+            int TargetFanSpeed;
+            int TargetTemperature;
+        }
+
+        internal enum ADLODNControlType 
+        { 
+            ODNControlType_Current = 0, 
+            ODNControlType_Default = 1, 
+            ODNControlType_Auto = 2, 
+            ODNControlType_Manual = 3
+        }
+
+    internal enum ADLODNTemperatureType
         {
             // This typed is named like this in the documentation but for some reason AMD failed to include it...
             // Yet it seems these correspond with ADL_PMLOG_TEMPERATURE_xxx.
