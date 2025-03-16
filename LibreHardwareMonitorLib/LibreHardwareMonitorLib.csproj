@@ -35,6 +35,7 @@
     <EmbeddedResource Include="Resources\WinRing0x64.gz" />
     <EmbeddedResource Include="Resources\PawnIo\IntelMSR.bin" />
     <EmbeddedResource Include="Resources\PawnIo\RyzenSMU.bin" />
+    <EmbeddedResource Include="Resources\PawnIo\AMDFamily0F.bin" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' != 'net472'">
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
