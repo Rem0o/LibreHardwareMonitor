@@ -51,7 +51,7 @@ internal class Nct677X : ISuperIO
     private readonly ushort[] _voltageRegisters;
     private readonly ushort _voltageVBatRegister;
 
-    public Nct677X(Chip chip, byte revision, ushort port, LpcPort lpcPort)
+    public Nct677X(LpcPort lpcPort, Chip chip, byte revision, ushort port)
     {
         Chip = chip;
         _revision = revision;
@@ -907,43 +907,18 @@ internal class Nct677X : ISuperIO
         {
             byte bank = (byte)(address >> 8);
             byte register = (byte)(address & 0xFF);
-            Ring0.WriteIoPort(_port + ADDRESS_REGISTER_OFFSET, BANK_SELECT_REGISTER);
-            Ring0.WriteIoPort(_port + DATA_REGISTER_OFFSET, bank);
-            Ring0.WriteIoPort(_port + ADDRESS_REGISTER_OFFSET, register);
-            return Ring0.ReadIoPort(_port + DATA_REGISTER_OFFSET);
+            _lpcPort.WriteIoPort((ushort)(_port + ADDRESS_REGISTER_OFFSET), BANK_SELECT_REGISTER);
+            _lpcPort.WriteIoPort((ushort)(_port + DATA_REGISTER_OFFSET), bank);
+            _lpcPort.WriteIoPort((ushort)(_port + ADDRESS_REGISTER_OFFSET), register);
+            return _lpcPort.ReadIoPort((ushort)(_port + DATA_REGISTER_OFFSET));
         }
 
         byte page = (byte)(address >> 8);
         byte index = (byte)(address & 0xFF);
-
-        //wait for access, access == EC_SPACE_PAGE_SELECT
-        //timeout: after 500ms, abort and force access
-        byte access;
-
-        DateTime timeout = DateTime.UtcNow.AddMilliseconds(500);
-        while (true)
-        {
-            access = Ring0.ReadIoPort(_port + EC_SPACE_PAGE_REGISTER_OFFSET);
-            if (access == EC_SPACE_PAGE_SELECT || DateTime.UtcNow > timeout)
-                break;
-
-            System.Threading.Thread.Sleep(1);
-        }
-
-        if (access != EC_SPACE_PAGE_SELECT)
-        {
-            // Failed to gain access: force register access
-            Ring0.WriteIoPort(_port + EC_SPACE_PAGE_REGISTER_OFFSET, EC_SPACE_PAGE_SELECT);
-        }
-
-        Ring0.WriteIoPort(_port + EC_SPACE_PAGE_REGISTER_OFFSET, page);
-        Ring0.WriteIoPort(_port + EC_SPACE_INDEX_REGISTER_OFFSET, index);
-        byte result = Ring0.ReadIoPort(_port + EC_SPACE_DATA_REGISTER_OFFSET);
-
-        //free access for other instances
-        Ring0.WriteIoPort(_port + EC_SPACE_PAGE_REGISTER_OFFSET, EC_SPACE_PAGE_SELECT);
-
-        return result;
+        _lpcPort.WriteIoPort((ushort)(_port + EC_SPACE_PAGE_REGISTER_OFFSET), EC_SPACE_PAGE_SELECT);
+        _lpcPort.WriteIoPort((ushort)(_port + EC_SPACE_PAGE_REGISTER_OFFSET), page);
+        _lpcPort.WriteIoPort((ushort)(_port + EC_SPACE_INDEX_REGISTER_OFFSET), index);
+        return _lpcPort.ReadIoPort((ushort)(_port + EC_SPACE_DATA_REGISTER_OFFSET));
     }
 
     private void WriteByte(ushort address, byte value)
@@ -952,42 +927,19 @@ internal class Nct677X : ISuperIO
         {
             byte bank = (byte)(address >> 8);
             byte register = (byte)(address & 0xFF);
-            Ring0.WriteIoPort(_port + ADDRESS_REGISTER_OFFSET, BANK_SELECT_REGISTER);
-            Ring0.WriteIoPort(_port + DATA_REGISTER_OFFSET, bank);
-            Ring0.WriteIoPort(_port + ADDRESS_REGISTER_OFFSET, register);
-            Ring0.WriteIoPort(_port + DATA_REGISTER_OFFSET, value);
+            _lpcPort.WriteIoPort((ushort)(_port + ADDRESS_REGISTER_OFFSET), BANK_SELECT_REGISTER);
+            _lpcPort.WriteIoPort((ushort)(_port + DATA_REGISTER_OFFSET), bank);
+            _lpcPort.WriteIoPort((ushort)(_port + ADDRESS_REGISTER_OFFSET), register);
+            _lpcPort.WriteIoPort((ushort)(_port + DATA_REGISTER_OFFSET), value);
         }
         else
         {
             byte page = (byte)(address >> 8);
             byte index = (byte)(address & 0xFF);
-
-            //wait for access, access == EC_SPACE_PAGE_SELECT
-            //timeout: after 500ms, abort and force access
-            byte access;
-
-            DateTime timeout = DateTime.UtcNow.AddMilliseconds(500);
-            while (true)
-            {
-                access = Ring0.ReadIoPort(_port + EC_SPACE_PAGE_REGISTER_OFFSET);
-                if (access == EC_SPACE_PAGE_SELECT || DateTime.UtcNow > timeout)
-                    break;
-
-                System.Threading.Thread.Sleep(1);
-            }
-
-            if (access != EC_SPACE_PAGE_SELECT)
-            {
-                // Failed to gain access: force register access
-                Ring0.WriteIoPort(_port + EC_SPACE_PAGE_REGISTER_OFFSET, EC_SPACE_PAGE_SELECT);
-            }
-
-            Ring0.WriteIoPort(_port + EC_SPACE_PAGE_REGISTER_OFFSET, page);
-            Ring0.WriteIoPort(_port + EC_SPACE_INDEX_REGISTER_OFFSET, index);
-            Ring0.WriteIoPort(_port + EC_SPACE_DATA_REGISTER_OFFSET, value);
-
-            //free access for other instances
-            Ring0.WriteIoPort(_port + EC_SPACE_PAGE_REGISTER_OFFSET, EC_SPACE_PAGE_SELECT);
+            _lpcPort.WriteIoPort((ushort)(_port + EC_SPACE_PAGE_REGISTER_OFFSET), EC_SPACE_PAGE_SELECT);
+            _lpcPort.WriteIoPort((ushort)(_port + EC_SPACE_PAGE_REGISTER_OFFSET), page);
+            _lpcPort.WriteIoPort((ushort)(_port + EC_SPACE_INDEX_REGISTER_OFFSET), index);
+            _lpcPort.WriteIoPort((ushort)(_port + EC_SPACE_DATA_REGISTER_OFFSET), value);
         }
     }
 
@@ -1100,9 +1052,9 @@ internal class Nct677X : ISuperIO
         if (IsNuvotonVendor())
             return;
 
-        _lpcPort.WinbondNuvotonFintekEnter();
+        _lpcPort.Enter();
         _lpcPort.NuvotonDisableIOSpaceLock();
-        _lpcPort.WinbondNuvotonFintekExit();
+        _lpcPort.Exit();
     }
 
     [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -1166,7 +1118,7 @@ internal class Nct677X : ISuperIO
     }
 
     // ReSharper disable InconsistentNaming
-    private const uint ADDRESS_REGISTER_OFFSET = 0x05;
+    private const ushort ADDRESS_REGISTER_OFFSET = 0x05;
     private const byte BANK_SELECT_REGISTER = 0x4E;
     private const uint DATA_REGISTER_OFFSET = 0x06;
 
