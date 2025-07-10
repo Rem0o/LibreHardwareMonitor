@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -7,7 +8,7 @@ using Microsoft.Win32;
 
 namespace LibreHardwareMonitor.PawnIo;
 
-internal class PawnIo : IDisposable
+internal class PawnIO
 {
     [DllImport("kernel32", SetLastError = true)]
     static extern IntPtr LoadLibrary(string lpFileName);
@@ -28,7 +29,12 @@ internal class PawnIo : IDisposable
     [DllImport("PawnIOLib", ExactSpelling = true, PreserveSig = false)]
     private static extern void pawnio_close(IntPtr handle);
 
-    private IntPtr _handle;
+
+    private PawnIO()
+    {
+        TryLoadDll();
+        pawnio_open(out _handle);
+    }
 
     private static void TryLoadDll()
     {
@@ -44,7 +50,8 @@ internal class PawnIo : IDisposable
 
         // Try getting path from registry
         if ((Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\PawnIO", "Install_Dir", null) ??
-             Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\PawnIO", "Install_Dir", null)) is string
+             Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\PawnIO", "Install_Dir", null) ??
+             @"C:\Program Files\PawnIO") is string
             {
                 Length: > 0
             } pawnIoPath)
@@ -66,75 +73,79 @@ internal class PawnIo : IDisposable
     public static uint Version()
     {
         TryLoadDll();
-        pawnio_version(out var version);
+        pawnio_version(out uint version);
         return version;
     }
 
-    private PawnIo()
+    public static void Open()
     {
         TryLoadDll();
-        pawnio_open(out _handle);
     }
 
-    ~PawnIo()
+    public static void Close()
     {
-        ReleaseUnmanagedResources();
+        foreach (PawnIO module in _loadedModules.Values)
+        {
+            nint handle = Interlocked.Exchange(ref module._handle, IntPtr.Zero);
+            if (handle != IntPtr.Zero)
+                pawnio_close(handle);
+        }
+
+        _loadedModules.Clear();
     }
 
-    private void ReleaseUnmanagedResources()
-    {
-        var handle = Interlocked.Exchange(ref _handle, IntPtr.Zero);
-        if (handle != IntPtr.Zero)
-            pawnio_close(handle);
-    }
 
-    public void Dispose()
+    public static PawnIO LoadModule(string name, byte[] bytes)
     {
-        ReleaseUnmanagedResources();
-        GC.SuppressFinalize(this);
-    }
+        if (_loadedModules.TryGetValue(name, out PawnIO pawnIO))
+        {
+            return pawnIO;
+        }
 
-    private void LoadModule(byte[] bytes)
-    {
+        pawnIO = new PawnIO();
         unsafe
         {
             fixed (byte* bytesPtr = bytes)
             {
-                pawnio_load(_handle, bytesPtr, (IntPtr)bytes.Length);
+                pawnio_load(pawnIO._handle, bytesPtr, (IntPtr)bytes.Length);
             }
         }
+
+        _loadedModules.Add(name, pawnIO);
+
+        return pawnIO;
     }
 
-    private void LoadModuleFromResource(Assembly assembly, string resourceName)
+    public static PawnIO LoadModuleFromResource(Assembly assembly, string resourceName)
     {
-        using var s = assembly.GetManifestResourceStream(resourceName);
+        if (_loadedModules.TryGetValue(resourceName, out PawnIO pawnIO))
+        {
+            return pawnIO;
+        }
+
+        using Stream s = assembly.GetManifestResourceStream(resourceName);
         if (s is not UnmanagedMemoryStream ums) throw new InvalidOperationException();
+
+        pawnIO = new PawnIO();
         unsafe
         {
-            pawnio_load(_handle, ums.PositionPointer, (IntPtr)ums.Length);
+            pawnio_load(pawnIO._handle, ums.PositionPointer, (IntPtr)ums.Length);
         }
-    }
 
-    public static PawnIo FromModule(byte[] bytes)
-    {
-        var pawnIo = new PawnIo();
-        pawnIo.LoadModule(bytes);
-        return pawnIo;
-    }
+        _loadedModules.Add(resourceName, pawnIO);
 
-    public static PawnIo FromModuleResource(Assembly assembly, string resourceName)
-    {
-        var pawnIo = new PawnIo();
-        pawnIo.LoadModuleFromResource(assembly, resourceName);
-        return pawnIo;
+        return pawnIO;
     }
 
     public long[] Execute(string name, long[] input, int outLength)
     {
-        var outArray = new long[outLength];
+        long[] outArray = new long[outLength];
         pawnio_execute(_handle, name, input, (IntPtr)input.Length, outArray, (IntPtr)outArray.Length,
-            out var returnLength);
+            out nint returnLength);
         Array.Resize(ref outArray, (int)returnLength);
         return outArray;
     }
+
+    private IntPtr _handle;
+    private static readonly Dictionary<string, PawnIO> _loadedModules = [];
 }

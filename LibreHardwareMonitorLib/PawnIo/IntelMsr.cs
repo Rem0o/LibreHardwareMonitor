@@ -1,24 +1,25 @@
-﻿using LibreHardwareMonitor.Hardware;
+﻿using System;
+using LibreHardwareMonitor.Hardware;
 
 namespace LibreHardwareMonitor.PawnIo;
 
 public class IntelMsr
 {
-    private readonly PawnIo _pawnIo;
+    private readonly long[] _inArray = new long[1];
+    private PawnIO _pawnIO;
 
     public IntelMsr()
     {
-        _pawnIo = PawnIo.FromModuleResource(typeof(IntelMsr).Assembly, $"{nameof(LibreHardwareMonitor)}.Resources.PawnIo.IntelMSR.bin");
+        _pawnIO = PawnIO.LoadModuleFromResource(typeof(IntelMsr).Assembly, $"{nameof(LibreHardwareMonitor)}.Resources.PawnIo.IntelMSR.bin");
     }
 
     public bool ReadMsr(uint index, out ulong value)
     {
-        var inArray = new long[1];
-        inArray[0] = (long)index;
+        _inArray[0] = (long)index;
         value = 0;
         try
         {
-            var outArray = _pawnIo.Execute("ioctl_read_msr", inArray, 1);
+            long[] outArray = _pawnIO.Execute("ioctl_read_msr", _inArray, 1);
             value = (ulong)outArray[0];
         }
         catch
@@ -30,13 +31,12 @@ public class IntelMsr
 
     public bool ReadMsr(uint index, out uint eax, out uint edx)
     {
-        var inArray = new long[1];
-        inArray[0] = (long)index;
+        _inArray[0] = (long)index;
         eax = 0;
         edx = 0;
         try
         {
-            var outArray = _pawnIo.Execute("ioctl_read_msr", inArray, 1);
+            long[] outArray = _pawnIO.Execute("ioctl_read_msr", _inArray, 1);
             eax = (uint)outArray[0];
             edx = (uint)(outArray[0] >> 32);
         }

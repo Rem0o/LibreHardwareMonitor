@@ -691,7 +691,7 @@ internal sealed class Amd17Cpu : AmdCpu
             uint msrPstate = eax;
             int curCpuVid = (int)((eax >> 14) & 0xff);
 
-            foreach(var t in Threads)
+            foreach(CpuThread t in Threads)
             {
                 t.ReadPerformanceCounter();
             }

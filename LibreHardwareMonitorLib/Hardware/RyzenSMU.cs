@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 using LibreHardwareMonitor.PawnIo;
 
@@ -257,7 +258,7 @@ internal class RyzenSMU
         float[] table = new float[_pmTableSize / 4];
 
         _ryzenSmu.UpdatePmTable();
-        var read = _ryzenSmu.ReadPmTable((int)((_pmTableSize + 7) / 8));
+        long[] read = _ryzenSmu.ReadPmTable((int)((_pmTableSize + 7) / 8));
         Buffer.BlockCopy(read, 0, table, 0, (int)_pmTableSize);
 
         return table;

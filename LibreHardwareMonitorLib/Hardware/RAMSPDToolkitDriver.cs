@@ -234,7 +234,7 @@ namespace LibreHardwareMonitor.Hardware
                                 }
                             }
 
-                            var temp = (uint)baseClass << 24 | (uint)subClass << 16 | (uint)programIf << 8;
+                            uint temp = (uint)baseClass << 24 | (uint)subClass << 16 | (uint)programIf << 8;
 
                             if ((conf.C & 0xFFFFFF00) == temp)
                             {

@@ -5,14 +5,12 @@
 // All Rights Reserved.
 
 using System;
-using LibreHardwareMonitor.PawnIO;
+using LibreHardwareMonitor.PawnIo;
 
 namespace LibreHardwareMonitor.Hardware.Motherboard.Lpc;
 
 internal class LpcPort
 {
-    private PawnIO.LpcIO _pioLpc;
-
     public enum ChipVendor
     {
         Unknown = 0,
@@ -27,8 +25,8 @@ internal class LpcPort
         ValuePort = valuePort;
         if ((registerPort != 0x2e && registerPort != 0x4e) || (valuePort != 0x2f && valuePort != 0x4f))
             throw new ArgumentOutOfRangeException();
-        _pioLpc = new PawnIO.LpcIO();
-        var detected = _pioLpc.Detect(registerPort == 0x2e ? 0 : 1);
+        _pioLpc = new PawnIo.LpcIO();
+        long detected = _pioLpc.Detect(registerPort == 0x2e ? 0 : 1);
         Vendor = (ChipVendor)(detected >> 32);
         ChipIdRevision = (ushort)(detected & 0xFFFF);
     }
@@ -111,5 +109,6 @@ internal class LpcPort
     // ReSharper disable InconsistentNaming
     private const byte DEVICE_SELECT_REGISTER = 0x07;
     private const byte NUVOTON_HARDWARE_MONITOR_IO_SPACE_LOCK = 0x28;
+    private PawnIo.LpcIO _pioLpc;
     // ReSharper restore InconsistentNaming
 }

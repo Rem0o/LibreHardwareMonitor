@@ -95,7 +95,7 @@ internal class MemoryGroup : IGroup
             SMBusManager.DetectSMBuses();
 
             //Go through detected SMBuses
-            foreach (var smbus in SMBusManager.RegisteredSMBuses)
+            foreach (SMBusInterface smbus in SMBusManager.RegisteredSMBuses)
             {
                 //Go through possible RAM slots
                 for (byte i = SPDConstants.SPD_BEGIN; i <= SPDConstants.SPD_END; ++i)
@@ -122,7 +122,7 @@ internal class MemoryGroup : IGroup
 
     private void AddDimms(List<SPDAccessor> accessors, ISettings settings)
     {
-        foreach (var ram in accessors)
+        foreach (SPDAccessor ram in accessors)
         {
             //Default value
             string name = $"DIMM #{ram.Index}";

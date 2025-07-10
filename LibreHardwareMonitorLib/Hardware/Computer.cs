@@ -503,6 +503,7 @@ public class Computer : IComputer
         if (IsRing0Enabled)
             Ring0.Open();
 
+        PawnIo.PawnIO.Open();
         Mutexes.Open();
         OpCode.Open();
 
@@ -646,6 +647,7 @@ public class Computer : IComputer
         OpCode.Close();
         InpOut.Close();
         Ring0.Close();
+        PawnIo.PawnIO.Close();
         Mutexes.Close();
 
         _smbios = null;

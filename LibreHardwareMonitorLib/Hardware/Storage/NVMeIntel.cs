@@ -52,7 +52,7 @@ internal class NVMeIntel : INVMeDrive
         if (validTransfer)
         {
             IntPtr offset = Marshal.OffsetOf<Kernel32.NVME_PASS_THROUGH_IOCTL>(nameof(Kernel32.NVME_PASS_THROUGH_IOCTL.DataBuffer));
-            var newPtr = IntPtr.Add(buffer, offset.ToInt32());
+            nint newPtr = IntPtr.Add(buffer, offset.ToInt32());
             int finalSize = Marshal.SizeOf<Kernel32.NVME_IDENTIFY_CONTROLLER_DATA>();
             IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf<Kernel32.NVME_IDENTIFY_CONTROLLER_DATA>());
             Kernel32.RtlZeroMemory(ptr, finalSize);
@@ -104,7 +104,7 @@ internal class NVMeIntel : INVMeDrive
         if (validTransfer)
         {
             IntPtr offset = Marshal.OffsetOf<Kernel32.NVME_PASS_THROUGH_IOCTL>(nameof(Kernel32.NVME_PASS_THROUGH_IOCTL.DataBuffer));
-            var newPtr = IntPtr.Add(buffer, offset.ToInt32());
+            nint newPtr = IntPtr.Add(buffer, offset.ToInt32());
             data = Marshal.PtrToStructure<Kernel32.NVME_HEALTH_INFO_LOG>(newPtr);
             Marshal.FreeHGlobal(buffer);
             result = true;

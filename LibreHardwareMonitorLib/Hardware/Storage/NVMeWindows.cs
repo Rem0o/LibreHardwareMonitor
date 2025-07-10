@@ -43,7 +43,7 @@ internal class NVMeWindows : INVMeDrive
         {
             //map NVME_IDENTIFY_CONTROLLER_DATA to nptwb.Buffer
             IntPtr offset = Marshal.OffsetOf<Kernel32.STORAGE_QUERY_BUFFER>(nameof(Kernel32.STORAGE_QUERY_BUFFER.Buffer));
-            var newPtr = IntPtr.Add(buffer, offset.ToInt32());
+            nint newPtr = IntPtr.Add(buffer, offset.ToInt32());
             data = Marshal.PtrToStructure<Kernel32.NVME_IDENTIFY_CONTROLLER_DATA>(newPtr);
             Marshal.FreeHGlobal(buffer);
             result = true;
@@ -80,7 +80,7 @@ internal class NVMeWindows : INVMeDrive
         {
             //map NVME_HEALTH_INFO_LOG to nptwb.Buffer
             IntPtr offset = Marshal.OffsetOf<Kernel32.STORAGE_QUERY_BUFFER>(nameof(Kernel32.STORAGE_QUERY_BUFFER.Buffer));
-            var newPtr = IntPtr.Add(buffer, offset.ToInt32());
+            nint newPtr = IntPtr.Add(buffer, offset.ToInt32());
             data = Marshal.PtrToStructure<Kernel32.NVME_HEALTH_INFO_LOG>(newPtr);
             Marshal.FreeHGlobal(buffer);
             result = true;

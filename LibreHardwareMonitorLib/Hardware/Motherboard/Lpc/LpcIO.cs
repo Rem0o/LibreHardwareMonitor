@@ -20,7 +20,7 @@ internal class LpcIO
 
     public LpcIO(Motherboard motherboard)
     {
-        if (!Ring0.IsOpen || !Mutexes.WaitIsaBus(100))
+        if (!Mutexes.WaitIsaBus(100))
             return;
 
         Detect(motherboard);
@@ -593,7 +593,7 @@ internal class LpcIO
                 gpioVerify = port.ReadWord(BASE_ADDRESS_REGISTER + 2);
             }
 
-            GigabyteController gigabyteController = FindGigabyteEC(port, chip, motherboard);
+            IGigabyteController gigabyteController = FindGigabyteEC(port, chip, motherboard);
 
             port.Exit();
 
@@ -626,7 +626,7 @@ internal class LpcIO
         return false;
     }
 
-    private GigabyteController FindGigabyteEC(LpcPort port, Chip chip, Motherboard motherboard)
+    private IGigabyteController FindGigabyteEC(LpcPort port, Chip chip, Motherboard motherboard)
     {
         // The controller only affects the 2nd ITE chip if present, and only a few
         // models are known to use this controller.
@@ -644,7 +644,7 @@ internal class LpcIO
             valid = false;
         }
 
-        return valid ? new GigabyteController(port) : null;
+        return valid ? new IsaBridgeGigabyteController(port) : null;
     }
 
     // ReSharper disable InconsistentNaming
