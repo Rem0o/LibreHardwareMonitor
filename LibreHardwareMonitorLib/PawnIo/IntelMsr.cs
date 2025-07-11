@@ -6,7 +6,7 @@ namespace LibreHardwareMonitor.PawnIo;
 public class IntelMsr
 {
     private readonly long[] _inArray = new long[1];
-    private PawnIO _pawnIO;
+    private readonly PawnIO _pawnIO;
 
     public IntelMsr()
     {

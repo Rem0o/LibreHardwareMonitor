@@ -5,7 +5,7 @@ namespace LibreHardwareMonitor.PawnIo;
 
 public class RyzenSmu
 {
-    private PawnIO _pawnIO;
+    private readonly PawnIO _pawnIO;
 
     public RyzenSmu()
     {

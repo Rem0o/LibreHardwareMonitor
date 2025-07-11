@@ -6,7 +6,7 @@ namespace LibreHardwareMonitor.PawnIo
     {
         readonly long[] _singleArgArray = new long[1];
         readonly long[] _doubleArgArray = new long[2];
-        private PawnIO _pawnIO;
+        readonly PawnIO _pawnIO;
 
         public LpcIO()
         {

@@ -5,7 +5,7 @@ namespace LibreHardwareMonitor.PawnIo;
 
 public class AmdFamily0F
 {
-    private PawnIO _pawnIO;
+    private readonly PawnIO _pawnIO;
 
     public AmdFamily0F()
     {
