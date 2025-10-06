@@ -20,14 +20,21 @@
     <PackageIcon>packageicon.png</PackageIcon>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
     <Platforms>x64;x86</Platforms>
+    <RuntimeIdentifiers>win-x64;win-x86</RuntimeIdentifiers>
+    <NoWarn>$(NoWarn);CA1416</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(BuildOnlyRefs)'=='true'">
+    <Platform>AnyCPU</Platform>
+    <ProduceOnlyReferenceAssembly>true</ProduceOnlyReferenceAssembly>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-    <OutputPath>..\bin\Debug\</OutputPath>
+    <OutputPath>..\bin\Debug\$(Platform)\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <OutputPath>..\bin\Release\</OutputPath>
     <Optimize>true</Optimize>
     <DebugSymbols>false</DebugSymbols>
+    <OutputPath>..\bin\Release\$(Platform)\</OutputPath>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -66,4 +73,5 @@
       <Pack>True</Pack>
     </None>
   </ItemGroup>
+  <Import Project="main.nuget.target" Condition="'$(PackMainNuget)' == 'true'" />
 </Project>
