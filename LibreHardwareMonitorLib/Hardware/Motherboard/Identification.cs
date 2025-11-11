@@ -1,4 +1,4 @@
-﻿// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+// This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
 // If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 // Copyright (C) LibreHardwareMonitor and Contributors.
 // Partial Copyright (C) Michael Möller <mmoeller@openhardwaremonitor.org> and Contributors.
@@ -542,6 +542,9 @@ internal class Identification
                 return Model.B650M_AORUS_ELITE;
             case var _ when name.Equals("B650M AORUS ELITE AX", StringComparison.OrdinalIgnoreCase):
                 return Model.B650M_AORUS_ELITE_AX;
+            case var _ when name.Equals("B650I AX", StringComparison.OrdinalIgnoreCase):
+            case var _ when name.Equals("A620I AX", StringComparison.OrdinalIgnoreCase):
+                return Model.B650I_AX;
             case var _ when name.Equals("ROG STRIX Z390-E GAMING", StringComparison.OrdinalIgnoreCase):
                 return Model.ROG_STRIX_Z390_E_GAMING;
             case var _ when name.Equals("ROG STRIX Z390-F GAMING", StringComparison.OrdinalIgnoreCase):
@@ -713,6 +716,8 @@ internal class Identification
             case var _ when name.Equals("X870E Taichi", StringComparison.OrdinalIgnoreCase):
             case var _ when name.Equals("X870E Taichi Lite", StringComparison.OrdinalIgnoreCase):
                 return Model.X870E_TAICHI;
+            case var _ when name.Equals("X870E Nova WiFi", StringComparison.OrdinalIgnoreCase):
+                return Model.X870E_NOVA_WIFI;
             case var _ when name.Equals("X670 AORUS ELITE AX", StringComparison.OrdinalIgnoreCase):
                 return Model.X670_AORUS_ELITE_AX;
             case var _ when name.Equals("PROART B760-CREATOR D4", StringComparison.OrdinalIgnoreCase):
