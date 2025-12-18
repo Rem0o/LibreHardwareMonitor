@@ -19,6 +19,16 @@ public abstract class EmbeddedController : Hardware
     // https://dortania.github.io/Getting-Started-With-ACPI/Manual/dump.html
     private static readonly BoardInfo[] _boards =
     {
+        new (Model.PRIME_Z270_A,
+            BoardFamily.Intel300,
+            ECSensor.TempTSensor,
+            ECSensor.TempChipset,
+            ECSensor.FanWaterPump
+        ),
+        new (Model.TUF_GAMING_X870_PLUS_WIFI,
+            BoardFamily.Amd800,
+            ECSensor.TempVrm,
+            ECSensor.FanCPUOpt),
         new(Model.PRIME_X470_PRO,
             BoardFamily.Amd400,
             ECSensor.TempChipset,
@@ -397,6 +407,13 @@ public abstract class EmbeddedController : Hardware
             }
         },
         {
+            BoardFamily.Intel200, new Dictionary<ECSensor, EmbeddedControllerSource>
+            {
+                { ECSensor.TempChipset, new EmbeddedControllerSource("Chipset", SensorType.Temperature, 0x003a) },
+                { ECSensor.TempTSensor, new EmbeddedControllerSource("T Sensor", SensorType.Temperature, 0x003d, blank: -40) },
+            }
+        },
+        {
             BoardFamily.Intel300, new Dictionary<ECSensor, EmbeddedControllerSource>
             {
                 { ECSensor.TempVrm, new EmbeddedControllerSource("VRM", SensorType.Temperature, 0x003e) },
@@ -522,8 +539,8 @@ public abstract class EmbeddedController : Hardware
         int readRegister = 0;
         for (int si = 0; si < _sensors.Count; ++si)
         {
-            int littleEndian    = _sources[si].IsLittleEndian ? 1 : 0;
-            int bigEndian       = _sources[si].IsLittleEndian ? 0 : 1;
+            int littleEndian = _sources[si].IsLittleEndian ? 1 : 0;
+            int bigEndian = _sources[si].IsLittleEndian ? 0 : 1;
 
             int val = _sources[si].Size switch
             {
@@ -605,7 +622,7 @@ public abstract class EmbeddedController : Hardware
 
         /// <summary>CPU temperature [℃]</summary>
         TempCPU,
-		
+
         /// <summary>CPU Package temperature [℃]</summary>
         TempCPUPackage,
 
@@ -658,8 +675,9 @@ public abstract class EmbeddedController : Hardware
         Amd400,
         Amd500,
         Amd600,
-		Amd800,
+        Amd800,
         Intel100,
+        Intel200,
         Intel300,
         Intel400,
         Intel600,

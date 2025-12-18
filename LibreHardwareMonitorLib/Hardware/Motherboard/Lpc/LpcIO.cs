@@ -436,6 +436,7 @@ internal class LpcIO
                             case Model.X870E_EDGE_TI_WIFI:
                             case Model.X870E_GODLIKE:
                             case Model.Z890_ACE:
+                            case Model.Z890_UNIFY_X:
                             case Model.Z890_CARBON_WIFI:
                             case Model.Z890_GAMING_PLUS_WIFI:
                             case Model.Z890_TOMAHAWK_WIFI:

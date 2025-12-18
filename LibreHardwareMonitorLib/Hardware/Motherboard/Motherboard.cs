@@ -163,6 +163,8 @@ public class Motherboard : IHardware
 
         r.AppendLine("Motherboard");
         r.AppendLine();
+        r.AppendLine($"Model (enum): {Model})");
+        r.AppendLine();
         r.Append(SMBios.GetReport());
 
         if (_lpcIO != null)

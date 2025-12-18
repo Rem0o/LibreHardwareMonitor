@@ -5,6 +5,7 @@
 // All Rights Reserved.
 
 using System;
+using System.Diagnostics.Contracts;
 
 namespace LibreHardwareMonitor.Hardware.Motherboard;
 
@@ -407,6 +408,8 @@ internal class Identification
                 return Model.AX370_Gaming_5;
             case var _ when name.Equals("TUF X470-PLUS GAMING", StringComparison.OrdinalIgnoreCase):
                 return Model.TUF_X470_PLUS_GAMING;
+            case var _ when name.Equals("TUF GAMING X870-PLUS WIFI", StringComparison.OrdinalIgnoreCase):
+                return Model.TUF_GAMING_X870_PLUS_WIFI;
             case var _ when name.Equals("B360M PRO-VDH (MS-7B24)", StringComparison.OrdinalIgnoreCase):
                 return Model.B360M_PRO_VDH;
             case var _ when name.Equals("A320M-S2H-CF", StringComparison.OrdinalIgnoreCase):
@@ -725,6 +728,8 @@ internal class Identification
                 return Model.Z790_GODLIKE_MAX;
             case var _ when name.Equals("MEG Z890 ACE (MS-7E22)", StringComparison.OrdinalIgnoreCase):
                 return Model.Z890_ACE;
+            case var _ when name.Equals("MEG Z890 UNIFY-X (MS-7E20)", StringComparison.OrdinalIgnoreCase):
+                return Model.Z890_UNIFY_X;
             case var _ when name.Equals("MAG Z890 TOMAHAWK WIFI (MS-7E32)", StringComparison.OrdinalIgnoreCase):
                 return Model.Z890_TOMAHAWK_WIFI;
             case var _ when name.Equals("MPG Z890 CARBON WIFI (MS-7E17)", StringComparison.OrdinalIgnoreCase):
@@ -756,6 +761,8 @@ internal class Identification
                 return Model.PROART_B760_CREATOR_D4;
             case var _ when name.Equals("TUF GAMING B450-PLUS II", StringComparison.OrdinalIgnoreCase):
                 return Model.TUF_GAMING_B450_PLUS_II;
+            case var _ when name.Equals("PRIME Z270-A", StringComparison.OrdinalIgnoreCase):
+                return Model.PRIME_Z270_A;
             case var _ when name.Equals("FRANBMCP03", StringComparison.OrdinalIgnoreCase):
                 return Model.FRANBMCP03;
             case var _ when name.Equals("FRANBMCP06", StringComparison.OrdinalIgnoreCase):
