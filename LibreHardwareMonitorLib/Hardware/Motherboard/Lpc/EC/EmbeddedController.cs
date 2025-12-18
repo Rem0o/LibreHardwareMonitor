@@ -22,8 +22,7 @@ public abstract class EmbeddedController : Hardware
         new (Model.PRIME_Z270_A,
             BoardFamily.Intel200,
             ECSensor.TempTSensor,
-            ECSensor.TempChipset
-        ),
+            ECSensor.TempChipset),
         new (Model.TUF_GAMING_X870_PLUS_WIFI,
             BoardFamily.Amd800,
             ECSensor.TempVrm,
@@ -408,8 +407,11 @@ public abstract class EmbeddedController : Hardware
         {
             BoardFamily.Intel200, new Dictionary<ECSensor, EmbeddedControllerSource>
             {
-                { ECSensor.TempChipset, new EmbeddedControllerSource("Chipset", SensorType.Temperature, 0x003a) },
-                { ECSensor.TempTSensor, new EmbeddedControllerSource("T Sensor", SensorType.Temperature, 0x003d, blank: -40) },
+                { ECSensor.TempChipset, new EmbeddedControllerSource("Chipset", SensorType.Temperature, 0x3a) },
+                { ECSensor.TempTSensor, new EmbeddedControllerSource("T Sensor", SensorType.Temperature, 0x3d, blank: -40) },
+                { ECSensor.TempCPU, new EmbeddedControllerSource("CPU", SensorType.Temperature, 0x3b) },
+                { ECSensor.TempMB, new EmbeddedControllerSource("Motherboard", SensorType.Temperature, 0x3c) },
+                { ECSensor.FanCPUOpt, new EmbeddedControllerSource("CPU Optional Fan", SensorType.Fan, 0xbc, 2)  }
             }
         },
         {
