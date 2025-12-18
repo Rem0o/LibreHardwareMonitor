@@ -20,10 +20,9 @@ public abstract class EmbeddedController : Hardware
     private static readonly BoardInfo[] _boards =
     {
         new (Model.PRIME_Z270_A,
-            BoardFamily.Intel300,
+            BoardFamily.Intel200,
             ECSensor.TempTSensor,
-            ECSensor.TempChipset,
-            ECSensor.FanWaterPump
+            ECSensor.TempChipset
         ),
         new (Model.TUF_GAMING_X870_PLUS_WIFI,
             BoardFamily.Amd800,
