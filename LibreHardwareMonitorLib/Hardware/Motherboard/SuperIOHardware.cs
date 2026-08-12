@@ -3531,11 +3531,17 @@ internal sealed class SuperIOHardware : Hardware
                         t.Add(new Temperature("Auxiliary Index #2", 5));
                         //t.Add(new Temperature("Temperature #6", 6));
 
-                        for (int i = 0; i < superIO.Fans.Length; i++)
-                            f.Add(new Fan("Fan #" + (i + 1), i));
+                        f.Add(new Fan("CPU Fan", 1));
+                        c.Add(new Control("CPU Fan", 1));
+                        f.Add(new Fan("CPU Pump", 2));
+                        c.Add(new Control("CPU Pump", 2));
 
-                        for (int i = 0; i < superIO.Controls.Length; i++)
-                            c.Add(new Control("Fan #" + (i + 1), i));
+                        f.Add(new Fan("Chassis #1", 0));
+                        c.Add(new Control("Chassis #1", 0));
+                        f.Add(new Fan("Chassis #2", 3));
+                        c.Add(new Control("Chassis #2", 3));
+                        f.Add(new Fan("Chassis #3", 4));
+                        c.Add(new Control("Chassis #3", 4));
 
                         break;
 
@@ -5398,6 +5404,56 @@ internal sealed class SuperIOHardware : Hardware
                         c.Add(new Control("Chassis Fan #4", 4)); // CHA_FAN_4
                         c.Add(new Control("CPU Optional Fan", 5)); // CPU_OPT
                         c.Add(new Control("AIO Pump", 6)); // AIO_PUMP
+
+                        break;
+
+                    case Model.ROG_STRIX_B850_A_GAMING_WIFI: // NCT6701D
+                    case Model.TUF_GAMING_B850_BTF_WIFI_W: // NCT6701D
+                    case Model.TUF_GAMING_X870_PRO_WIFI7_W_NEO: // NCT6701D
+                        v.Add(new Voltage("Vcore", 0));
+                        v.Add(new Voltage("+5V", 1, 4.02f, 1));
+                        v.Add(new Voltage("AVSB", 2, 34, 34));
+                        v.Add(new Voltage("+3.3V", 3, 34, 34));
+                        v.Add(new Voltage("+12V", 4, 10.98f, 1));
+                        v.Add(new Voltage("Voltage #6", 5, true));
+                        v.Add(new Voltage("Voltage #7", 6, true));
+                        v.Add(new Voltage("+3V Standby", 7, 34, 34));
+                        v.Add(new Voltage("CMOS Battery", 8, 34, 34));
+                        v.Add(new Voltage("Voltage #10", 9, true));
+                        v.Add(new Voltage("CPU VDDIO Memory", 10, 34, 34));
+                        v.Add(new Voltage("VMisc", 11, 34, 34));
+                        v.Add(new Voltage("1.8V Standby", 12, 7.66f, 10));
+                        v.Add(new Voltage("Voltage #14", 13, true));
+                        v.Add(new Voltage("Voltage #15", 14, true));
+                        v.Add(new Voltage("Voltage #16", 15, true));
+
+                        t.Add(new Temperature("Motherboard", 2));
+                        t.Add(new Temperature("CPU Package", 26));
+                        t.Add(new Temperature("CPU", 21));
+
+                        if (model == Model.TUF_GAMING_X870_PRO_WIFI7_W_NEO)
+                        {
+                            t.Add(new Temperature("Temperature #14", 27));
+                            t.Add(new Temperature("T_Sensor", 24));
+
+                            fanControlNames = ["Chassis Fan #1", "CPU Fan", "Chassis Fan #2", "Chassis Fan #3", "Chassis Fan #4", "Water Pump+", "AIO Pump"];
+                        }
+                        else
+                        {
+                            t.Add(new Temperature("VRM", 1));
+                            t.Add(new Temperature("T_Sensor", 24));
+
+                            fanControlNames = ["CPU Fan", "CPU Optional Fan", "Chassis Fan #1", "Chassis Fan #2", "Chassis Fan #3", "Chassis Fan #4", "AIO Pump"];
+                        }
+
+                        System.Diagnostics.Debug.Assert(fanControlNames.Length == superIO.Fans.Length, $"Expected {fanControlNames.Length} fan register in the SuperIO chip");
+                        System.Diagnostics.Debug.Assert(superIO.Fans.Length == superIO.Controls.Length, "Expected counts of fans, controls and fan speed registers to be equal");
+
+                        for (int i = 0; i < fanControlNames.Length; i++)
+                            f.Add(new Fan(fanControlNames[i], i));
+
+                        for (int i = 0; i < fanControlNames.Length; i++)
+                            c.Add(new Control(fanControlNames[i], i));
 
                         break;
 
