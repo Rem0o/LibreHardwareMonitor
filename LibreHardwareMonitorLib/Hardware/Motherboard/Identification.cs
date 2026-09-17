@@ -655,6 +655,8 @@ internal class Identification
                 return Model.ROG_STRIX_Z790_E_GAMING_WIFI;
             case var _ when name.Equals("ROG STRIX Z790-E GAMING WIFI II", StringComparison.OrdinalIgnoreCase):
                 return Model.ROG_STRIX_Z790_E_GAMING_WIFI_II;
+            case var _ when name.Equals("ROG STRIX Z890-E GAMING WIFI", StringComparison.OrdinalIgnoreCase):
+                return Model.ROG_STRIX_Z890_E_GAMING_WIFI;
             case var _ when name.Equals("MPG X570 GAMING PLUS (MS-7C37)", StringComparison.OrdinalIgnoreCase):
                 return Model.X570_Gaming_Plus;
             case var _ when name.Equals("ROG MAXIMUS Z790 FORMULA", StringComparison.OrdinalIgnoreCase):
@@ -791,6 +793,8 @@ internal class Identification
                 return Model.X870E_NOVA_WIFI;
             case var _ when name.Equals("B850I Lightning WiFi", StringComparison.OrdinalIgnoreCase):
                 return Model.B850I_LIGHTNING_WIFI;
+            case var _ when name.StartsWith("B650M-HDV/M.2", StringComparison.OrdinalIgnoreCase):
+                return Model.B650M_HDV_M_2;
             case var _ when name.Equals("X670 AORUS ELITE AX", StringComparison.OrdinalIgnoreCase):
                 return Model.X670_AORUS_ELITE_AX;
             case var _ when name.Equals("PROART B760-CREATOR D4", StringComparison.OrdinalIgnoreCase):
