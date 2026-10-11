@@ -214,6 +214,8 @@ internal class Identification
                 return Model.ROG_STRIX_B550_F_GAMING_WIFI;
             case var _ when name.Equals("ROG STRIX X470-I GAMING", StringComparison.OrdinalIgnoreCase):
                 return Model.ROG_STRIX_X470_I;
+            case var _ when name.Equals("ROG STRIX B450-F GAMING", StringComparison.OrdinalIgnoreCase):
+                return Model.ROG_STRIX_B450_F_GAMING;
             case var _ when name.Equals("ROG STRIX B550-E GAMING", StringComparison.OrdinalIgnoreCase):
                 return Model.ROG_STRIX_B550_E_GAMING;
             case var _ when name.Equals("ROG STRIX B550-I GAMING", StringComparison.OrdinalIgnoreCase):
@@ -429,6 +431,7 @@ internal class Identification
                 return Model.B360M_H;
             case var _ when name.Equals("B550-A PRO (MS-7C56)", StringComparison.OrdinalIgnoreCase):
             case var _ when name.Equals("PRO B550-VC (MS-7C56)", StringComparison.OrdinalIgnoreCase):
+            case var _ when name.Equals("MPG B550 GAMING PLUS (MS-7C56)", StringComparison.OrdinalIgnoreCase):
                 return Model.B550A_PRO;
             case var _ when name.Equals("B450-A PRO (MS-7B86)", StringComparison.OrdinalIgnoreCase):
                 return Model.B450A_PRO;
